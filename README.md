@@ -20,4 +20,4 @@ streamlit run .\Streamlit_test.py
 
 ```
 
-[Full Report](https://github.com/AbelKidane-abita/Reports/blob/main/Report.ipynb)
+[Full Report](https://github.com/AbelKidane-abita/Reports/blob/main/notebooks/Report.ipynb)
