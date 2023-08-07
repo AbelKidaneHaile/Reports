@@ -1,0 +1,6 @@
+onnxruntime
+fire
+opencv-python
+opencv-python-headless
+streamlit
+ultralytics
