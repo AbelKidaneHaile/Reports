@@ -19,3 +19,4 @@ python prediction.py --image_path=test.jpg --onnx_path=best_re_final.onnx
 streamlit run .\Streamlit_test.py
 
 ```
+Full report can be found on the following link : https://github.com/AbelKidane-abita/Reports/blob/main/Report.ipynb
