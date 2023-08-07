@@ -3,6 +3,14 @@ from PIL import Image
 from prediction import prediction
 import streamlit as st
 
+#Title
+#description
+#Sidebar that contains parameters that can display confidence, and other parameters
+#
+
+
+
+
 image_path = st.text_input('Image path', 'Enter the path to the image')
 st.write('Image path is', image_path)
 
