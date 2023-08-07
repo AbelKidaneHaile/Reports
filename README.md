@@ -2,6 +2,7 @@
 
 ## 1. Install requirements
 
+install using
 ```
 pip install -r requirements.txt
 
