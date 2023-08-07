@@ -1,6 +1,5 @@
-onnxruntime
-fire
-opencv-python
-opencv-python-headless
-streamlit
-ultralytics
+onnxruntime==1.15.1
+fire==0.5.0
+opencv-python-headless==4.8.0.74
+streamlit==1.25.0
+ultralytics==8.0.139
