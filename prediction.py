@@ -2,68 +2,96 @@
 import onnxruntime
 import cv2
 import numpy as np
-# from PIL import Image
+from PIL import Image
 import matplotlib.pyplot as plt
 import fire
+import streamlit as st
 
-def prediction(image_path, onnx_path):
-    opt_session = onnxruntime.SessionOptions()
-    opt_session.enable_mem_pattern = False
-    opt_session.enable_cpu_mem_arena = False
-    opt_session.graph_optimization_level = onnxruntime.GraphOptimizationLevel.ORT_DISABLE_ALL
+def prediction(image_path, model_path):
+    
+    # load image
+    def load_image(image_path, input_shape):
+        image = cv2.imread(image_path)
+        # Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        input_height, input_width = input_shape[2:]
+        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        resized = cv2.resize(image_rgb, (input_width, input_height))
+        # Scale input pixel value to 0 to 1
+        input_image = resized / 255.0
+        input_image = input_image.transpose(2,0,1)
+        input_tensor = input_image[np.newaxis, :, :, :].astype(np.float32)
+        input_tensor.shape
 
-    model_path = onnx_path
-    EP_list = ['CUDAExecutionProvider', 'CPUExecutionProvider']
+        return [image, input_tensor, rgb_image]
 
-    ort_session = onnxruntime.InferenceSession(model_path, providers=EP_list)
+    # load model
+    def load_model(model_path):
+        opt_session = onnxruntime.SessionOptions()
+        opt_session.enable_mem_pattern = False
+        opt_session.enable_cpu_mem_arena = False
+        opt_session.graph_optimization_level = onnxruntime.GraphOptimizationLevel.ORT_DISABLE_ALL  
+        model_path = model_path
+        EP_list = ['CUDAExecutionProvider', 'CPUExecutionProvider']
+        ort_session = onnxruntime.InferenceSession(model_path, providers=EP_list)
+        model_inputs = ort_session.get_inputs()
+        input_names = [model_inputs[i].name for i in range(len(model_inputs))]
+        input_shape = model_inputs[0].shape
 
-    model_inputs = ort_session.get_inputs()
-    input_names = [model_inputs[i].name for i in range(len(model_inputs))]
-    input_shape = model_inputs[0].shape
-    input_shape
+        return [ort_session, input_shape]
 
-    image = cv2.imread(image_path)
-    image_height, image_width = image.shape[:2]
-    # Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    # run inference using the onnx model
+    def predict(image, ort_session, input_tensor):
 
-    #SHOW ORIGINAL IMAGE USING PLT
-    plt.imshow(rgb_image)
-    plt.show()
+        model_inputs = ort_session.get_inputs()
+        input_names = [model_inputs[i].name for i in range(len(model_inputs))]
+        input_shape = model_inputs[0].shape
+        input_height, input_width = input_shape[2:]
+        image_height, image_width = image.shape[:2]
+        model_output = ort_session.get_outputs()
+        output_names = [model_output[i].name for i in range(len(model_output))]
+        outputs = ort_session.run(output_names, {input_names[0]: input_tensor})[0]
+        predictions = np.squeeze(outputs).T
+        conf_thresold = 0.8
+        # Filter out object confidence scores below threshold
+        scores = np.max(predictions[:, 4:], axis=1)
+        predictions = predictions[scores > conf_thresold, :]
+        scores = scores[scores > conf_thresold]  
+        # Get the class with the highest confidence
+        class_ids = np.argmax(predictions[:, 4:], axis=1)
+        # Get bounding boxes for each object
+        boxes = predictions[:, :4]
+        #rescale box
+        input_shape = np.array([input_width, input_height, input_width, input_height])
+        boxes = np.divide(boxes, input_shape, dtype=np.float32)
+        boxes *= np.array([image_width, image_height, image_width, image_height])
+        boxes = boxes.astype(np.int32)
 
+        return [boxes, scores, class_ids]
 
-    input_height, input_width = input_shape[2:]
-    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    resized = cv2.resize(image_rgb, (input_width, input_height))
+    # annotate the image by drawing the bounding boxes
+    def annotate(image, boxes, scores, class_ids):
+        # Apply non-maxima suppression to suppress weak, overlapping bounding boxes
+        indices = nms(boxes, scores, 0.3)
+        # Define classes 
+        CLASSES = ['head']
+        image_draw = image.copy()
+        for (bbox, score, label) in zip(xywh2xyxy(boxes[indices]), scores[indices], class_ids[indices]):
+            bbox = bbox.round().astype(np.int32).tolist()
+            cls_id = int(label)
+            cls = CLASSES[cls_id]
+            color = (0,255,0)
+            cv2.rectangle(image_draw, tuple(bbox[:2]), tuple(bbox[2:]), color, 2)
+            cv2.putText(image_draw,
+                        f'{cls}:{int(score*100)}', (bbox[0], bbox[1] - 2),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.60, [225, 255, 255],
+                        thickness=1)
+            
+        # Image.fromarray(cv2.cvtColor(image_draw, cv2.COLOR_BGR2RGB))
+        rgb_image_draw = cv2.cvtColor(image_draw, cv2.COLOR_BGR2RGB)
 
-    # Scale input pixel value to 0 to 1
-    input_image = resized / 255.0
-    input_image = input_image.transpose(2,0,1)
-    input_tensor = input_image[np.newaxis, :, :, :].astype(np.float32)
-    input_tensor.shape
-
-    model_output = ort_session.get_outputs()
-    output_names = [model_output[i].name for i in range(len(model_output))]
-    outputs = ort_session.run(output_names, {input_names[0]: input_tensor})[0]
-
-    predictions = np.squeeze(outputs).T
-    conf_thresold = 0.8
-    # Filter out object confidence scores below threshold
-    scores = np.max(predictions[:, 4:], axis=1)
-    predictions = predictions[scores > conf_thresold, :]
-    scores = scores[scores > conf_thresold]  
-
-    # Get the class with the highest confidence
-    class_ids = np.argmax(predictions[:, 4:], axis=1)
-
-    # Get bounding boxes for each object
-    boxes = predictions[:, :4]
-
-    #rescale box
-    input_shape = np.array([input_width, input_height, input_width, input_height])
-    boxes = np.divide(boxes, input_shape, dtype=np.float32)
-    boxes *= np.array([image_width, image_height, image_width, image_height])
-    boxes = boxes.astype(np.int32)
+        return rgb_image_draw
 
     def nms(boxes, scores, iou_threshold):
         # Sort by score
@@ -106,14 +134,6 @@ def prediction(image_path, onnx_path):
 
         return iou
 
-    # Apply non-maxima suppression to suppress weak, overlapping bounding boxes
-    indices = nms(boxes, scores, 0.3)
-
-    # Define classes 
-    CLASSES = [
-    'head'
-    ]
-
     def xywh2xyxy(x):
         # Convert bounding box (x, y, w, h) to bounding box (x1, y1, x2, y2)
         y = np.copy(x)
@@ -122,27 +142,19 @@ def prediction(image_path, onnx_path):
         y[..., 2] = x[..., 0] + x[..., 2] / 2
         y[..., 3] = x[..., 1] + x[..., 3] / 2
         return y
+    
 
-    image_draw = image.copy()
-    for (bbox, score, label) in zip(xywh2xyxy(boxes[indices]), scores[indices], class_ids[indices]):
-        bbox = bbox.round().astype(np.int32).tolist()
-        cls_id = int(label)
-        cls = CLASSES[cls_id]
-        color = (0,255,0)
-        cv2.rectangle(image_draw, tuple(bbox[:2]), tuple(bbox[2:]), color, 2)
-        cv2.putText(image_draw,
-                    f'{cls}:{int(score*100)}', (bbox[0], bbox[1] - 2),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.60, [225, 255, 255],
-                    thickness=1)
+    # *Calling Functions*
+    model = load_model(model_path)
+    input_I = load_image(image_path, model[1]) #path and input shape is passed
+    predictions = predict(input_I[0], model[0], input_I[1])  #image, ort_session, and input tensor is passed
+    annotated_image = annotate(input_I [0], predictions[0], predictions[1], predictions[2]) #boxes, and scores are passed
+    # plt.imshow(annotated_image)
+    # plt.show()
+    return annotated_image
 
 
-    # Image.fromarray(cv2.cvtColor(image_draw, cv2.COLOR_BGR2RGB))
-    rgb_image_draw = cv2.cvtColor(image_draw, cv2.COLOR_BGR2RGB)
-
-    #SHOW ORIGINAL IMAGE USING PLT
-    plt.imshow(rgb_image_draw)
-    plt.show()
 
 if __name__=='__main__':
+    print("Starting execution:")
     fire.Fire(prediction)
