@@ -16,8 +16,8 @@ python prediction.py --image_path=test.jpg --onnx_path=best_re_final.onnx
 
 ## 3. Run inference using Streamlit
 ```
-streamlit run .\Streamlit_test.py
+streamlit run ./Streamlit_test.py
 
 ```
 
-[Full Report](https://github.com/AbelKidane-abita/Reports/blob/main/Report.ipynb)
+[Full Report](https://github.com/AbelKidane-abita/Reports/blob/main/notebooks/Report.ipynb)
