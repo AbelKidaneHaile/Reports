@@ -1,28 +1,65 @@
 import streamlit as st
 from PIL import Image
 from prediction import prediction
+from prediction import confidence
 import streamlit as st
+import time
+import os
 
-#Title
-#description
-#Sidebar that contains parameters that can display confidence, and other parameters
-#
+# Global variables
+uploaded_file = None
+path_to_image = ""
+
+def make_prediction():
+
+    global confidence
+    global path_to_image
+    global uploaded_file
+
+    if uploaded_file is not None:
+        with st.spinner(f"Detecting heads in the image: {uploaded_file.name}"):
+            annotatedImage = prediction(path_to_image, confidence)
+        st.image(annotatedImage, caption='Model Prediction')
+    
+def upload_file():
+
+    global path_to_image
+    global uploaded_file
+    global Image_uploaded
+    global confidence
+
+    uploaded_file = st.file_uploader("Upload an image",type=['jpg','png','jpeg'])
+    if uploaded_file is not None:
+        path_to_image = "image/"+uploaded_file.name
+        image = Image.open(uploaded_file)
+        st.image(image, caption="Original image")
+        # Save image to the directory 'image' if it doesn't exist
+        if not os.path.exists(path_to_image):
+            image.save(path_to_image)
+        make_prediction() # make prediction
 
 
+def side_bar():
+
+    global confidence
+    global uploaded_file
+
+    with st.sidebar:
+        st.subheader("Modify parameters")
+        confidence = st.slider('Confidence %', 0, 100, 80)
+        if uploaded_file is not None:
+            make_prediction() # make prediction
+            
 
 
-image_path = st.text_input('Image path', 'Enter the path to the image')
-st.write('Image path is', image_path)
+def main_func():
+    #Title
+    st.title('YoloV8 Head Detector')
+    #description
+    st.text('This is a YoloV8 object detection model that identifies human heads. \nPlease upload an image to use it.')
+    
+    side_bar()
+    upload_file()
 
-if st.button('View Image'):
-    image = Image.open(image_path)
-    st.image(image, caption='Original Image')
-
-
-
-model_path = st.text_input('Model path', 'Enter the path to the model')
-st.write('Model path is', model_path)
-
-if st.button('View Prediction'):
-    annotatedImage = prediction(image_path, model_path)
-    st.image(annotatedImage, caption='Model Prediction')
+if __name__=='__main__':
+    main_func()
