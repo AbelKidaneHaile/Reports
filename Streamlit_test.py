@@ -21,10 +21,10 @@ def make_prediction():
     global iou_thresold
 
     if uploaded_file is not None:
-        with st.spinner(f"Detecting heads in the image: {uploaded_file.name}"):
+        with st.spinner(f"Detecting heads in the image. Please wait..."):
             annotatedImage = prediction(path_to_image, confidence, 
             disp_Class=Display_Class, disp_Confidence=Display_Confidence)
-        st.image(annotatedImage, caption='Model Prediction')
+        st.image(annotatedImage, caption=f'Model Prediction')
     
 def upload_file():
 
@@ -36,7 +36,7 @@ def upload_file():
     if uploaded_file is not None:
         path_to_image = "image/"+uploaded_file.name
         image = Image.open(uploaded_file)
-        # st.image(image, caption="Original image")
+        # st.image(image, caption="Original image")    # >> Remove later if it is not needed
         # Save image to the directory 'image' if it doesn't exist
         if not os.path.exists(path_to_image):
             image.save(path_to_image)
@@ -57,23 +57,22 @@ def side_bar():
         iou_thresold = st.slider('IOU Threshold %', 0, 100, 30)
         
         # Checkboxes to display class and confidence for each detection
-        Display_Class = st.checkbox('Display Class', value=True)             #  >> In Development
+        Display_Class = st.checkbox('Display Class', value=True)   
         Display_Confidence = st.checkbox('Display Confidence', value=True) 
+        
 
-        if uploaded_file is not None:
-            make_prediction() # make prediction
-            st.text(f'{Display_Class} {Display_Confidence}')
+        # if uploaded_file is not None:
+        #     make_prediction() # make prediction
+        #     st.text(f'{Display_Class} {Display_Confidence}')
 
 
 
 def main_func():
-    #Title
-    st.title('YoloV8 Head Detector')
-    #description
-    st.text('This is a YoloV8 object detection model that detects human heads.')
     
-    side_bar()
-    upload_file()
+    st.title('YoloV8 Head Detector Model') #display title
+    st.text('This is a YoloV8 object detection model that detects human heads.') #display description
+    side_bar() #display side bar
+    upload_file() #display the button to upload the file from file explorer
 
 
 

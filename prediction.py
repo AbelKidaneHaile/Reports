@@ -93,7 +93,7 @@ def annotate(image, boxes, scores, class_ids):
         bbox = bbox.round().astype(np.int32).tolist()
         cls_id = int(label)
         cls = CLASSES[cls_id]
-        color = (0,255,0)
+        # color = (0,255,0)
  
         x1,y1,w,h = bbox[0], bbox[1], bbox[2]-bbox[0], bbox[3]-bbox[1]
         display_message = ""
@@ -109,7 +109,7 @@ def annotate(image, boxes, scores, class_ids):
                 display_message, (max(0,x1), max(35,y1)), 
                 thickness=1,scale=0.4, font=cv2.FONT_HERSHEY_DUPLEX , 
                 offset = 5,colorR=(0, 0, 0))
-
+        
     # Image.fromarray(cv2.cvtColor(image_draw, cv2.COLOR_BGR2RGB))
     rgb_image_draw = cv2.cvtColor(image_draw, cv2.COLOR_BGR2RGB)
     return rgb_image_draw
