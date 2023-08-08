@@ -2,6 +2,7 @@ import streamlit as st
 from PIL import Image
 from prediction import prediction
 from prediction import confidence
+from prediction import iou_thresold
 import streamlit as st
 import time
 import os
@@ -43,10 +44,12 @@ def side_bar():
 
     global confidence
     global uploaded_file
+    global iou_thresold
 
     with st.sidebar:
         st.subheader("Modify parameters")
         confidence = st.slider('Confidence %', 0, 100, 80)
+        iou_thresold = st.slider('IOU Threshold %', 0, 100, 30)
         if uploaded_file is not None:
             make_prediction() # make prediction
             

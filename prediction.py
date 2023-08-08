@@ -11,6 +11,7 @@ import cvzone
 # Global Variables
 confidence = 80
 conf_thresold = 0.8
+iou_thresold = 0.3
 
 # load image
 def load_image(image_path, input_shape):
@@ -78,7 +79,9 @@ def predict(image, ort_session, input_tensor):
 # annotate the image by drawing the bounding boxes
 def annotate(image, boxes, scores, class_ids):
     # Apply non-maxima suppression to suppress weak, overlapping bounding boxes
-    indices = nms(boxes, scores, 0.3)
+    global iou_thresold
+
+    indices = nms(boxes, scores, iou_thresold)
     # Define classes 
     CLASSES = ['head']
     image_draw = image.copy()
@@ -143,12 +146,14 @@ def xywh2xyxy(x):
     y[..., 3] = x[..., 1] + x[..., 3] / 2
     return y
     
-def prediction(image_path, conf=80, model_path="models/best_re_final.onnx"):
+def prediction(image_path, conf=80, iou_thresh = 30, model_path="models/best_re_final.onnx"):
     global confidence
     global conf_thresold
+    global iou_thresold
 
     confidence = conf
     conf_thresold = confidence/100
+    iou_thresold = 30/100
     # *Calling Functions*
     model = load_model(model_path)
     input_I = load_image(image_path, model[1]) #path and input shape is passed
