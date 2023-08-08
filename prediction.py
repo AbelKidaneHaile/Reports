@@ -92,8 +92,12 @@ def annotate(image, boxes, scores, class_ids):
         color = (0,255,0)
  
         x1,y1,w,h = bbox[0], bbox[1], bbox[2]-bbox[0], bbox[3]-bbox[1]
-        cvzone.cornerRect(image_draw, (x1,y1,w,h), colorR=(0, 255, 0),t=1)
-        cvzone.putTextRect(image_draw, f"{score:.2f}", (max(0,x1), max(35,y1)), thickness=2,scale=0.8, font=cv2.FONT_ITALIC)
+        # cvzone.cornerRect(image_draw, (x1,y1,w,h), colorR=(0, 255, 0),t=1)
+        cv2.rectangle(image_draw, (x1,y1,w,h), (0, 255, 0), 1)
+        cvzone.putTextRect(image_draw,
+            f"{cls} {score:.2f}", (max(0,x1), max(35,y1)), 
+            thickness=1,scale=0.4, font=cv2.FONT_HERSHEY_DUPLEX , 
+            offset = 5,colorR=(0, 0, 0))
         #{cls} {score:.2f}
 
     # Image.fromarray(cv2.cvtColor(image_draw, cv2.COLOR_BGR2RGB))

@@ -8,9 +8,9 @@ pip install -r requirements.txt
 
 ```
 
-## 2. Run inference from CLI
+## 2. Run inference from CLI and show the results using Matplotlib
 ```
-python prediction.py --image_path=test.jpg --onnx_path=best_re_final.onnx
+python ./predict_image.py --image_path=image/test.jpg
 
 ```
 

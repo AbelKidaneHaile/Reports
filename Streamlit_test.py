@@ -33,7 +33,7 @@ def upload_file():
     if uploaded_file is not None:
         path_to_image = "image/"+uploaded_file.name
         image = Image.open(uploaded_file)
-        st.image(image, caption="Original image")
+        # st.image(image, caption="Original image")
         # Save image to the directory 'image' if it doesn't exist
         if not os.path.exists(path_to_image):
             image.save(path_to_image)
