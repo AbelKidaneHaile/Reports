@@ -12,6 +12,8 @@ import cvzone
 confidence = 80
 conf_thresold = 0.8
 iou_thresold = 0.3
+Display_Confidence = True
+Display_Class = True
 
 # load image
 def load_image(image_path, input_shape):
@@ -80,6 +82,8 @@ def predict(image, ort_session, input_tensor):
 def annotate(image, boxes, scores, class_ids):
     # Apply non-maxima suppression to suppress weak, overlapping bounding boxes
     global iou_thresold
+    global Display_Confidence
+    global Display_Class
 
     indices = nms(boxes, scores, iou_thresold)
     # Define classes 
@@ -92,13 +96,19 @@ def annotate(image, boxes, scores, class_ids):
         color = (0,255,0)
  
         x1,y1,w,h = bbox[0], bbox[1], bbox[2]-bbox[0], bbox[3]-bbox[1]
+        display_message = ""
+        if (Display_Class):
+            display_message = display_message + cls
+        if(Display_Confidence):
+            display_message = f"{display_message} {score:.2f}"
         # cvzone.cornerRect(image_draw, (x1,y1,w,h), colorR=(0, 255, 0),t=1)
         cv2.rectangle(image_draw, (x1,y1,w,h), (0, 255, 0), 1)
-        cvzone.putTextRect(image_draw,
-            f"{cls} {score:.2f}", (max(0,x1), max(35,y1)), 
-            thickness=1,scale=0.4, font=cv2.FONT_HERSHEY_DUPLEX , 
-            offset = 5,colorR=(0, 0, 0))
-        #{cls} {score:.2f}
+        print(f'Display_Confidence {Display_Confidence} Display_Class {Display_Class}')
+        if (Display_Confidence or Display_Class):
+            cvzone.putTextRect(image_draw,
+                display_message, (max(0,x1), max(35,y1)), 
+                thickness=1,scale=0.4, font=cv2.FONT_HERSHEY_DUPLEX , 
+                offset = 5,colorR=(0, 0, 0))
 
     # Image.fromarray(cv2.cvtColor(image_draw, cv2.COLOR_BGR2RGB))
     rgb_image_draw = cv2.cvtColor(image_draw, cv2.COLOR_BGR2RGB)
@@ -150,14 +160,19 @@ def xywh2xyxy(x):
     y[..., 3] = x[..., 1] + x[..., 3] / 2
     return y
     
-def prediction(image_path, conf=80, iou_thresh = 30, model_path="models/best_re_final.onnx"):
+def prediction(image_path, conf=80, disp_Class=True, disp_Confidence=True,
+               iou_thresh_ = 30, model_path="models/best_re_final.onnx"):
     global confidence
     global conf_thresold
     global iou_thresold
+    global Display_Confidence
+    global Display_Class
 
+    Display_Confidence = disp_Confidence
+    Display_Class = disp_Class
     confidence = conf
     conf_thresold = confidence/100
-    iou_thresold = 30/100
+    iou_thresold = iou_thresh_
     # *Calling Functions*
     model = load_model(model_path)
     input_I = load_image(image_path, model[1]) #path and input shape is passed
