@@ -103,7 +103,6 @@ def annotate(image, boxes, scores, class_ids):
             display_message = f"{display_message} {score:.2f}"
         # cvzone.cornerRect(image_draw, (x1,y1,w,h), colorR=(0, 255, 0),t=1)
         cv2.rectangle(image_draw, (x1,y1,w,h), (0, 255, 0), 1)
-        print(f'Display_Confidence {Display_Confidence} Display_Class {Display_Class}')
         if (Display_Confidence or Display_Class):
             cvzone.putTextRect(image_draw,
                 display_message, (max(0,x1), max(35,y1)), 
@@ -126,7 +125,6 @@ def nms(boxes, scores, iou_threshold):
         ious = compute_iou(boxes[box_id, :], boxes[sorted_indices[1:], :])
         # Remove boxes with IoU over the threshold
         keep_indices = np.where(ious < iou_threshold)[0]
-        # print(keep_indices.shape, sorted_indices.shape)
         sorted_indices = sorted_indices[keep_indices + 1]
 
     return keep_boxes
@@ -178,12 +176,10 @@ def prediction(image_path, conf=80, disp_Class=True, disp_Confidence=True,
     input_I = load_image(image_path, model[1]) #path and input shape is passed
     predictions = predict(input_I[0], model[0], input_I[1])  #image, ort_session, and input tensor is passed
     annotated_image = annotate(input_I [0], predictions[0], predictions[1], predictions[2]) #boxes, and scores are passed
-    # plt.imshow(annotated_image)
-    # plt.show()
+
     return annotated_image
 
 
 
 if __name__=='__main__':
-    print("Starting execution:")
     fire.Fire(prediction)

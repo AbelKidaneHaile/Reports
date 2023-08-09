@@ -11,7 +11,7 @@ import os
 
 # Global variables
 uploaded_file = None
-path_to_image = ""
+path_to_image = None
 
 def make_prediction():
 
@@ -36,12 +36,10 @@ def upload_file():
     if uploaded_file is not None:
         path_to_image = "image/"+uploaded_file.name
         image = Image.open(uploaded_file)
-        # st.image(image, caption="Original image")    # >> Remove later if it is not needed
         # Save image to the directory 'image' if it doesn't exist
         if not os.path.exists(path_to_image):
             image.save(path_to_image)
-        make_prediction() # make prediction
-
+        make_prediction() 
 
 def side_bar():
 
@@ -61,19 +59,12 @@ def side_bar():
         Display_Confidence = st.checkbox('Display Confidence', value=True) 
         
 
-        # if uploaded_file is not None:
-        #     make_prediction() # make prediction
-        #     st.text(f'{Display_Class} {Display_Confidence}')
-
-
-
 def main_func():
     
     st.title('YoloV8 Head Detector Model') #display title
     st.text('This is a YoloV8 object detection model that detects human heads.') #display description
     side_bar() #display side bar
     upload_file() #display the button to upload the file from file explorer
-
 
 
 if __name__=='__main__':
