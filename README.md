@@ -1,10 +1,10 @@
 <h1><p align="center">Head Detector using YoloV8</p></h1>
 
 <p align="center">
-  <img href="https://github.com/AbelKidane-abita/Reports/blob/main/notebooks/Report.ipynb" alt="Static Badge" src="https://img.shields.io/badge/Report-Jupyter%20Notebook-orange" target="_blank">
-
-   <img  href="https://huggingface.co/spaces/AbelKidane/headdetector" alt="Static Badge" src="https://img.shields.io/badge/%F0%9F%A4%97-Hugging%20Face-yellow" target="_blank"> 
+  <a href="https://github.com/AbelKidane-abita/Reports/blob/main/notebooks/Report.ipynb"><img  alt="Static Badge" src="https://img.shields.io/badge/Report-Jupyter%20Notebook-orange" target="_blank">
+   <a  href="https://huggingface.co/spaces/AbelKidane/headdetector" ><img alt="Static Badge" src="https://img.shields.io/badge/%F0%9F%A4%97-Hugging%20Face-yellow" target="_blank"> 
 </p> 
+     
 <p align="center">
   This a head detection model based on Ultralytics YoloV8 model. Please clone the repository to use it or use the Hugging Face deployment.
 </p>
