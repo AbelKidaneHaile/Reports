@@ -9,9 +9,9 @@
   This a head detection model based on Ultralytics YoloV8 model. Please clone the repository to use it or use the Hugging Face deployment.
 </p>
 
-<h2><p align="center">Documentation</p></h2>
+<h2>Documentation</h2>
 
-## 1. Install requirements
+### 1. Install requirements
 
 Install dependencies using the following command
 ```
@@ -19,13 +19,13 @@ pip install -r requirements.txt
 
 ```
 
-## 2. Run inference from CLI and show the results using Matplotlib
+### 2. Run inference from CLI and show the results using Matplotlib
 ```
 python ./predict_image.py --image_path=image/test.jpg
 
 ```
 
-## 3. Run inference using Streamlit
+### 3. Run inference using Streamlit
 ```
 streamlit run ./Streamlit_test.py
 
