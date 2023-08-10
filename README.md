@@ -1,5 +1,7 @@
 # Head Detector using YoloV8
 
+[Full Report](https://github.com/AbelKidane-abita/Reports/blob/main/notebooks/Report.ipynb)
+[Hugging Face](https://huggingface.co/spaces/AbelKidane/headdetector)
 ## 1. Install requirements
 
 Install dependencies using the following command
@@ -20,4 +22,4 @@ streamlit run ./Streamlit_test.py
 
 ```
 
-[Full Report](https://github.com/AbelKidane-abita/Reports/blob/main/notebooks/Report.ipynb)
+
