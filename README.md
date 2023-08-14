@@ -14,7 +14,7 @@
 
 ### 1. Install requirements
 
-Install dependencies using the following command
+Install dependencies using the following command. The model is implemented using python version 3.10. 
 ```
 pip install -r requirements.txt
 
