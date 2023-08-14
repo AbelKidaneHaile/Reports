@@ -4,6 +4,8 @@
 <p align="center">
   <a href="https://github.com/AbelKidane-abita/Reports/blob/main/notebooks/Report.ipynb"><img  alt="Static Badge" src="https://img.shields.io/badge/Report-Jupyter%20Notebook-orange" target="_blank">
    <a  href="https://huggingface.co/spaces/AbelKidane/headdetector" ><img alt="Static Badge" src="https://img.shields.io/badge/%F0%9F%A4%97-Hugging%20Face-yellow" target="_blank"> 
+     <a  href="https://hub.docker.com/r/abelkidane/reports" ><img alt="Static Badge" src="https://img.shields.io/badge/docker-abelkidane%2Freports-blue?logo=docker" target="_blank"> 
+    
 </p> 
      
 <p align="center">
@@ -32,10 +34,21 @@ streamlit run ./streamlit_webapp.py
 
 ```
 ### 4. Run inference using Streamlit on Docker
+
+Build the image from the Dockerfile:
 ```
 docker build --tag abel_head_detector .
-docker run -it abel_head_detector streamlit run streamlit_webapp.py --server.port 8080
+```
 
+
+Or pull the image from docker hub:
+```
+docker pull abelkidane/reports
+```
+
+Run the image using docker run:
+```
+docker run -it abel_head_detector streamlit run streamlit_webapp.py --server.port 8080
 ```
 
 Or using docker compose (not completed yet)
@@ -44,4 +57,3 @@ docker build --tag abel_head_detector .
 docker compose up
 
 ```
-
