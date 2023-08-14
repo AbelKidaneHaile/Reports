@@ -31,11 +31,10 @@ python ./main.py --image_path=image/test.jpg
 streamlit run ./streamlit_webapp.py
 
 ```
-### 3. Run inference using Streamlit on Docker
+### 4. Run inference using Streamlit on Docker
 ```
 docker build --tag abel_head_detector .
-docker run -it abel_head_detector bash
-streamlit run streamlit_webapp.py --server.port 8080
+docker run -it abel_head_detector streamlit run streamlit_webapp.py --server.port 8080
 
 ```
 
