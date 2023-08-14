@@ -22,14 +22,27 @@ pip install -r requirements.txt
 
 ### 2. Run inference from CLI and show the results using Matplotlib
 ```
-python ./predict_image.py --image_path=image/test.jpg
+python ./main.py --image_path=image/test.jpg
 
 ```
 
 ### 3. Run inference using Streamlit
 ```
-streamlit run ./Streamlit_test.py
+streamlit run ./streamlit_webapp.py
+
+```
+### 3. Run inference using Streamlit on Docker
+```
+docker build --tag abel_head_detector .
+docker run -it abel_head_detector bash
+streamlit run streamlit_webapp.py --server.port 8080
 
 ```
 
+Or using docker compose (not completed yet)
+```
+docker build --tag abel_head_detector .
+docker compose up
+
+```
 

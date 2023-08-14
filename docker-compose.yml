@@ -1,0 +1,10 @@
+version: '3'
+serices:
+  head_detector:
+    image: abel_head_detector
+    ports: 8080:8080
+    working_dir: /app
+    command: streamlit run streamlit_webapp.py --server.port 8080
+    # volumes:  # they are all added in the docker image modify later
+    #  - $PWD/image:/app/image
+    #  - $PWD/models:/app/models
