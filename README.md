@@ -9,20 +9,20 @@
 </p> 
      
 <p align="center">
-  This a head detection model based on Ultralytics YoloV8 model. Please clone the repository to use it or use the Hugging Face deployment.
+  This is a head detection model based on the Ultralytics YoloV8 model. Please clone the repository to use it or use the Hugging Face deployment.
 </p>
 
 <h2>Documentation</h2>
 
 ### 1. Install requirements
 
-Install dependencies using the following command. The model is implemented using python version 3.10. 
+Install dependencies using the following command. The model is implemented using Python version 3.10. 
 ```
 pip install -r requirements.txt
 
 ```
 
-### 2. Run inference from CLI and show the results using Matplotlib
+### 2. Run inference from CLI and show the results using matplotlib
 ```
 python ./main.py --image_path=image/test.jpg
 
